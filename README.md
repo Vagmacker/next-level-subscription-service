@@ -1,9 +1,9 @@
 <div style="text-align: center;">
-  <p>
+  <p align="center">
     <img alt="" width="150" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kotlin/kotlin-original.svg" />
   </p>  
-  <h1>Subscription Service 🚀</h1>
-  <p>
+  <h1 align="center">Subscription Service 🚀</h1>
+  <p align="center">
     Next Level subscription microservice with Kotlin<br />
     Using Clean Architecture, DDD, TDD and best practices
   </p>
