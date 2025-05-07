@@ -5,7 +5,7 @@ import com.nextlevel.subscription.domain.money.Money
 import com.nextlevel.subscription.domain.plan.Plan
 import com.nextlevel.subscription.domain.plan.PlanId
 import org.junit.jupiter.api.Assertions.*
-import com.nextlevel.subscription.domain.plan.PlanRepository
+import com.nextlevel.subscription.domain.plan.PlanGateway
 import org.junit.jupiter.api.Test
 import org.mockito.AdditionalAnswers.returnsFirstArg
 import org.mockito.Mockito.verify
@@ -17,8 +17,8 @@ import org.mockito.kotlin.whenever
 
 class DefaultCreatePlanTest {
 
-    private val planRepository: PlanRepository = mock()
-    private val useCase = DefaultCreatePlan(planRepository)
+    private val planGateway: PlanGateway = mock()
+    private val useCase = DefaultCreatePlan(planGateway)
     private val captor = argumentCaptor<Plan>()
 
     @Test
@@ -31,39 +31,31 @@ class DefaultCreatePlanTest {
         val expectedDescription = "Plus plan"
         val expectedPlanId = PlanId(999L)
 
-        whenever(planRepository.nextId()).thenReturn(expectedPlanId)
-        whenever(planRepository.save(any())).thenAnswer(returnsFirstArg<Plan>())
-
-        val input = CreatePlanTestInput(
-            expectedName,
-            expectedDescription,
-            expectedPrice,
-            expectedCurrency,
-            expectedActive
-        )
+        whenever(planGateway.nextId()).thenReturn(expectedPlanId)
+        whenever(planGateway.save(any())).thenAnswer(returnsFirstArg<Plan>())
 
         // When
-        val output = useCase.execute(input)
+        val output = useCase.execute(
+            CreatePlan.Input(
+                name = expectedName,
+                description = expectedDescription,
+                price = expectedPrice,
+                currency = expectedCurrency,
+                active = expectedActive
+            )
+        )
 
-        assertEquals(expectedPlanId, output.planId())
+        assertEquals(expectedPlanId, output.planId)
 
         // Then
-        verify(planRepository, times(1)).save(captor.capture())
+        verify(planGateway, times(1)).save(captor.capture())
 
-        val plan = captor.firstValue
-
-        assertEquals(expectedName, plan.name)
-        assertEquals(expectedPlanId, plan.id())
-        assertEquals(expectedActive, plan.active)
-        assertEquals(expectedDescription, plan.description)
-        assertEquals(Money(expectedPrice, expectedCurrency), plan.price)
+        captor.firstValue.apply {
+            assertEquals(expectedName, name)
+            assertEquals(expectedPlanId, id)
+            assertEquals(expectedActive, active)
+            assertEquals(expectedDescription, description)
+            assertEquals(Money(expectedPrice, expectedCurrency), price)
+        }
     }
-
-    data class CreatePlanTestInput(
-        override val name: String,
-        override val description: String,
-        override val price: Double,
-        override val currency: String,
-        override val active: Boolean
-    ) : CreatePlan.Input
 }

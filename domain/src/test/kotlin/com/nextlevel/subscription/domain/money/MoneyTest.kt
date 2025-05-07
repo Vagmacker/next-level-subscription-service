@@ -1,10 +1,11 @@
 package com.nextlevel.subscription.domain.money
 
+import java.util.Currency
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
-import java.util.Currency
+import com.nextlevel.subscription.domain.UnitTest
 
-class MoneyTest {
+class MoneyTest : UnitTest() {
 
     @Test
     fun `should create Money with Currency object`() {

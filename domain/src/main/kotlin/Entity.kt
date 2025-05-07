@@ -1,8 +1,10 @@
 package com.nextlevel.subscription.domain
 
+import java.util.Objects
+
 abstract class Entity<ID : Identifier<*>> {
-    protected val id: ID
-    private val domainEvents: MutableList<DomainEvent>
+    val id: ID
+    val domainEvents: MutableList<DomainEvent>
 
     protected constructor(id: ID) : this(id, null)
 
@@ -12,15 +14,20 @@ abstract class Entity<ID : Identifier<*>> {
         this.domainEvents = domainEvents ?: mutableListOf()
     }
 
-    fun id(): ID {
-        return id
-    }
-
     fun registerEvent(event: DomainEvent) {
         domainEvents.add(event)
     }
 
-    fun domainEvents(): List<DomainEvent> {
-        return domainEvents.toList()
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Entity<*>
+
+        return id.equals(other.id)
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hash(id)
     }
 }

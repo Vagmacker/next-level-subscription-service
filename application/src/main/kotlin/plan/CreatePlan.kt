@@ -4,15 +4,15 @@ import com.nextlevel.subscription.application.UseCase
 import com.nextlevel.subscription.domain.plan.PlanId
 
 abstract class CreatePlan : UseCase<CreatePlan.Input, CreatePlan.Output>() {
-    interface Input {
-        val name: String
-        val description: String
-        val price: Double
-        val currency: String
+    data class Input(
+        val name: String,
+        val description: String,
+        val price: Double,
+        val currency: String,
         val active: Boolean
-    }
+    )
 
-    interface Output {
-        fun planId(): PlanId
-    }
+    data class Output(
+        val planId: PlanId
+    )
 }

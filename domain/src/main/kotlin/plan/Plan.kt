@@ -1,8 +1,9 @@
 package com.nextlevel.subscription.domain.plan
 
-import com.nextlevel.subscription.domain.AggregateRoot
-import com.nextlevel.subscription.domain.money.Money
 import java.time.Instant
+import com.nextlevel.subscription.domain.money.Money
+import com.nextlevel.subscription.domain.AggregateRoot
+import com.nextlevel.subscription.domain.exceptions.DomainException
 
 class Plan private constructor(
     id: PlanId,
@@ -15,10 +16,18 @@ class Plan private constructor(
     deletedAt: Instant? = null
 ) : AggregateRoot<PlanId>(id) {
 
-    var name: String = name
+    var name: String = name.let {
+        require(it.isNotBlank()) { throw DomainException.with("name must not be empty") }
+        require(it.length <= 100) { throw DomainException.with("name must be less than 100 characters") }
+        it
+    }
         private set
 
-    var description: String = description
+    var description: String = description.let {
+        require(it.isNotBlank()) { throw DomainException.with("description must not be empty") }
+        require(it.length <= 255) { throw DomainException.with("description must be less than 255 characters") }
+        it
+    }
         private set
 
     var price: Money = price
@@ -38,11 +47,7 @@ class Plan private constructor(
 
     companion object {
         fun newPlan(
-            id: PlanId,
-            name: String,
-            description: String,
-            price: Money,
-            active: Boolean = true
+            id: PlanId, name: String, description: String, price: Money, active: Boolean = true
         ): Plan {
             val now = Instant.now()
             return Plan(id, name, description, price, active, now, now)

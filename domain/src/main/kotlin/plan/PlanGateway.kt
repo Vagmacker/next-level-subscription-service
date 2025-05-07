@@ -1,6 +1,6 @@
 package com.nextlevel.subscription.domain.plan
 
-interface PlanRepository {
+interface PlanGateway {
     fun nextId(): PlanId
     fun planOfId(id: PlanId): Plan?
     fun save(plan: Plan): Plan
