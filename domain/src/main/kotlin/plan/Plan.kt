@@ -16,18 +16,17 @@ class Plan private constructor(
     deletedAt: Instant? = null
 ) : AggregateRoot<PlanId>(id) {
 
-    var name: String = name.let {
-        require(it.isNotBlank()) { throw DomainException.with("name must not be empty") }
-        require(it.length <= 100) { throw DomainException.with("name must be less than 100 characters") }
-        it
+    init {
+        require(name.isNotBlank()) { throw DomainException.with("name must not be empty") }
+        require(name.length <= 100) { throw DomainException.with("name must be less than 100 characters") }
+        require(description.isNotBlank()) { throw DomainException.with("description must not be empty") }
+        require(description.length <= 255) { throw DomainException.with("description must be less than 255 characters") }
     }
+
+    var name: String = name
         private set
 
-    var description: String = description.let {
-        require(it.isNotBlank()) { throw DomainException.with("description must not be empty") }
-        require(it.length <= 255) { throw DomainException.with("description must be less than 255 characters") }
-        it
-    }
+    var description: String = description
         private set
 
     var price: Money = price
@@ -56,26 +55,22 @@ class Plan private constructor(
 
     fun execute(cmd: PlanCommand) {
         when (cmd) {
-            is PlanCommand.ChangePlan -> apply(cmd)
-            is PlanCommand.InactivatePlan -> apply(cmd)
-            is PlanCommand.ActivatePlan -> apply(cmd)
+            is PlanCommand.ChangePlan -> apply {
+                name = cmd.name
+                price = cmd.price
+                description = cmd.description
+            }
+
+            is PlanCommand.InactivatePlan -> apply {
+                active = false
+                deletedAt = deletedAt ?: Instant.now()
+            }
+
+            is PlanCommand.ActivatePlan -> apply {
+                active = true
+                deletedAt = null
+            }
         }
-        this.updatedAt = Instant.now()
-    }
-
-    private fun apply(cmd: PlanCommand.ChangePlan) {
-        this.name = cmd.name
-        this.price = cmd.price
-        this.description = cmd.description
-    }
-
-    private fun apply(cmd: PlanCommand.ActivatePlan) {
-        this.active = true
-        this.deletedAt = null
-    }
-
-    private fun apply(cmd: PlanCommand.InactivatePlan) {
-        this.active = false
-        this.deletedAt = deletedAt ?: Instant.now()
+        updatedAt = Instant.now()
     }
 }

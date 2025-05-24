@@ -33,9 +33,6 @@ class Account private constructor(
             document: Document,
             email: Email,
             billingAddress: Address
-        ): Account {
-            val account = Account(id, name, document, email, billingAddress)
-            return account
-        }
+        ): Account = Account(id, name, document, email, billingAddress)
     }
 }
