@@ -1,25 +1,27 @@
 package com.nextlevel.subscription.application.plan.impl
 
+import com.nextlevel.subscription.application.UseCaseTest
 import com.nextlevel.subscription.application.plan.CreatePlan
 import com.nextlevel.subscription.domain.money.Money
 import com.nextlevel.subscription.domain.plan.Plan
-import com.nextlevel.subscription.domain.plan.PlanId
-import org.junit.jupiter.api.Assertions.*
 import com.nextlevel.subscription.domain.plan.PlanGateway
+import com.nextlevel.subscription.domain.plan.PlanId
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verifySequence
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.mockito.AdditionalAnswers.returnsFirstArg
-import org.mockito.Mockito.verify
-import org.mockito.kotlin.any
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.whenever
 
-class DefaultCreatePlanTest {
+class DefaultCreatePlanTest : UseCaseTest() {
 
-    private val planGateway: PlanGateway = mock()
-    private val useCase = DefaultCreatePlan(planGateway)
-    private val captor = argumentCaptor<Plan>()
+    private val planGateway = mockk<PlanGateway>(relaxed = true)
+
+    @InjectMockKs
+    private var useCase = DefaultCreatePlan(planGateway)
+
+    private val captor = slot<Plan>()
 
     @Test
     fun `given a valid input when calls execute then should create a plan`() {
@@ -31,8 +33,8 @@ class DefaultCreatePlanTest {
         val expectedDescription = "Plus plan"
         val expectedPlanId = PlanId(999L)
 
-        whenever(planGateway.nextId()).thenReturn(expectedPlanId)
-        whenever(planGateway.save(any())).thenAnswer(returnsFirstArg<Plan>())
+        every { planGateway.nextId() } returns expectedPlanId
+        every { planGateway.save(any()) } answers { firstArg() }
 
         // When
         val output = useCase.execute(
@@ -48,14 +50,18 @@ class DefaultCreatePlanTest {
         assertEquals(expectedPlanId, output.planId)
 
         // Then
-        verify(planGateway, times(1)).save(captor.capture())
-
-        captor.firstValue.apply {
-            assertEquals(expectedName, name)
-            assertEquals(expectedPlanId, id)
-            assertEquals(expectedActive, active)
-            assertEquals(expectedDescription, description)
-            assertEquals(Money(expectedPrice, expectedCurrency), price)
+        verifySequence {
+            planGateway.nextId()
+            planGateway.save(capture(captor))
         }
+
+        val actualPlan = captor.captured
+
+        assertEquals(expectedPlanId, actualPlan.id)
+        assertEquals(expectedName, actualPlan.name)
+        assertEquals(expectedDescription, actualPlan.description)
+        assertEquals(Money(expectedPrice, expectedCurrency), actualPlan.price)
+        assertEquals(expectedActive, actualPlan.active)
+        assertEquals(actualPlan.createdAt, actualPlan.updatedAt)
     }
 }

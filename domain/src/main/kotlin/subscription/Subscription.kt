@@ -42,6 +42,14 @@ class Subscription private constructor(
     var updatedAt: Instant = updatedAt
         private set
 
+    val isCanceled: Boolean = status === SubscriptionStatus.CANCELED
+
+    val isActive: Boolean = status === SubscriptionStatus.ACTIVE
+
+    val isTrail: Boolean = status === SubscriptionStatus.TRAILING
+
+    val isIncomplete: Boolean = status === SubscriptionStatus.INCOMPLETE
+
     companion object {
         fun newSubscription(
             anId: SubscriptionId,

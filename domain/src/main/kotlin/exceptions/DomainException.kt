@@ -3,6 +3,7 @@ package com.nextlevel.subscription.domain.exceptions
 import com.nextlevel.subscription.domain.Identifier
 import com.nextlevel.subscription.domain.AggregateRoot
 import com.nextlevel.subscription.domain.validation.Error
+import kotlin.reflect.KClass
 
 open class DomainException(
     message: String,
@@ -14,8 +15,8 @@ open class DomainException(
             return DomainException(message, mutableListOf(Error(message)))
         }
 
-        fun notFound(aggClass: Class<out AggregateRoot<*>>, id: Identifier<*>): DomainException {
-            return with("${aggClass.canonicalName} with id ${id.value} was not found")
+        fun notFound(aggClass: KClass<out AggregateRoot<*>>, id: Identifier<*>): DomainException {
+            return with("${aggClass.qualifiedName} with id ${id.value} was not found")
         }
 
         fun with(error: Error): DomainException {

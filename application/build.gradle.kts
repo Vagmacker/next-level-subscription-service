@@ -11,21 +11,20 @@ repositories {
 
 ext {
     set("junitVersion", "5.12.2")
-    set("mockitoVersion", "5.4.0")
+    set("mockkVersion", "1.14.2")
 }
 
 dependencies {
     implementation(project(":domain"))
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:${property("junitVersion")}")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:${property("mockitoVersion")}")
-
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${property("junitVersion")}")
+    testImplementation("io.mockk:mockk:${property("mockkVersion")}")
 }
 
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
 }
