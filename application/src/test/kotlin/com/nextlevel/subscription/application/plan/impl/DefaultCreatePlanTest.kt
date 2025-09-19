@@ -26,6 +26,7 @@ class DefaultCreatePlanTest : UseCaseTest() {
     @Test
     fun `given a valid input when calls execute then should create a plan`() {
         // Given
+        val expectedVersion = 0
         val expectedPrice = 9.99
         val expectedName = "Plus"
         val expectedActive = true
@@ -38,7 +39,7 @@ class DefaultCreatePlanTest : UseCaseTest() {
 
         // When
         val output = useCase.execute(
-            CreatePlan.Input(
+            CreatePlanInput(
                 name = expectedName,
                 description = expectedDescription,
                 price = expectedPrice,
@@ -59,9 +60,18 @@ class DefaultCreatePlanTest : UseCaseTest() {
 
         assertEquals(expectedPlanId, actualPlan.id)
         assertEquals(expectedName, actualPlan.name)
-        assertEquals(expectedDescription, actualPlan.description)
-        assertEquals(Money(expectedPrice, expectedCurrency), actualPlan.price)
         assertEquals(expectedActive, actualPlan.active)
+        assertEquals(expectedVersion, actualPlan.version)
+        assertEquals(expectedDescription, actualPlan.description)
         assertEquals(actualPlan.createdAt, actualPlan.updatedAt)
+        assertEquals(Money(expectedPrice, expectedCurrency), actualPlan.price)
     }
+
+    data class CreatePlanInput(
+        override val name: String,
+        override val description: String,
+        override val price: Double,
+        override val currency: String,
+        override val active: Boolean
+    ) : CreatePlan.Input
 }

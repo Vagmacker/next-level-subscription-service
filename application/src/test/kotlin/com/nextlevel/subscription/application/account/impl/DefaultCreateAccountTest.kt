@@ -36,7 +36,7 @@ class DefaultCreateAccountTest : UseCaseTest() {
 
         // When
         val output = useCase.execute(
-            CreateAccount.Input(
+            CreateAccountInput(
                 id = expectedAccountId.value,
                 userId = expectedUserId.value,
                 firstname = expectedFirstname,
@@ -58,7 +58,17 @@ class DefaultCreateAccountTest : UseCaseTest() {
         assertEquals(expectedFirstname, actualAccount.name.firstname)
         assertEquals(expectedLastname, actualAccount.name.lastname)
         assertEquals(expectedEmail, actualAccount.email.value)
-        assertEquals(expectedDocumentNumber, actualAccount.document.value)
+        assertEquals(expectedDocumentNumber, actualAccount.document.number)
         assertEquals(expectedUserId, actualAccount.userId)
     }
+
+    data class CreateAccountInput(
+        override val id: String,
+        override val userId: String,
+        override val firstname: String,
+        override val lastname: String,
+        override val documentNumber: String,
+        override val documentType: String,
+        override val email: String,
+    ) : CreateAccount.Input
 }

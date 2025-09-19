@@ -6,17 +6,17 @@ import com.nextlevel.subscription.domain.plan.Plan
 import com.nextlevel.subscription.domain.plan.PlanId
 
 abstract class CreatePlan : UseCase<CreatePlan.Input, CreatePlan.Output>() {
-    data class Input(
-        val name: String,
-        val description: String,
-        val price: Double,
-        val currency: String,
+    interface Input {
+        val name: String
+        val description: String
+        val price: Double
+        val currency: String
         val active: Boolean
-    )
+    }
 
-    data class Output(
+    interface Output {
         val planId: PlanId
-    )
+    }
 
     fun Input.toDomain(id: PlanId): Plan = Plan.newPlan(
         id = id,

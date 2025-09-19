@@ -18,17 +18,18 @@ class PlanIdTest : UnitTest() {
         val actualPlanId = PlanId(expectedId)
 
         // Then
-        assertNotNull(actualPlanId)
         assertEquals(expectedId, actualPlanId.value)
     }
 
     @Test
-    fun `given a null id value when instantiate then should return error`() {
+    fun `given an empty value when calls empty then should return ok`() {
         // Given
         val expectedId: Long? = null
-        val expectedErrorMessage = "planId must not be null"
+
+        // When
+        val actualPlanId = PlanId.empty()
 
         // Then
-        assertThrows<DomainException>(expectedErrorMessage) { PlanId(expectedId) }
+        assertEquals(expectedId, actualPlanId.value)
     }
 }

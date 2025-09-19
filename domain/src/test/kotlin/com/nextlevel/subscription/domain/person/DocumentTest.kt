@@ -19,7 +19,7 @@ class DocumentTest {
         // Then
         assert(actualDocument is Document.Cpf)
         assert(actualDocument.type == expectedType)
-        assert(actualDocument.value == expectedDocument)
+        assert(actualDocument.number == expectedDocument)
     }
 
     @Test
@@ -66,7 +66,7 @@ class DocumentTest {
         // Then
         assert(actualDocument is Document.Cnpj)
         assert(actualDocument.type == expectedType)
-        assert(actualDocument.value == expectedDocument)
+        assert(actualDocument.number == expectedDocument)
     }
 
     @Test

@@ -12,6 +12,7 @@ class PlantTest : UnitTest() {
     @Test
     fun `given a valid params when calls newPlan should instantiate`() {
         // Given
+        val expectedVersion = 0
         val expectedName = "Plus"
         val expectedActive = true
         val expectedId = PlanId(1L)
@@ -38,6 +39,7 @@ class PlantTest : UnitTest() {
             assertEquals(expectedName, name)
             assertEquals(expectedPrice, price)
             assertEquals(expectedActive, active)
+            assertEquals(expectedVersion, version)
             assertEquals(expectedDescription, description)
         }
     }

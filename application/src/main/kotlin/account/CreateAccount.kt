@@ -10,25 +10,25 @@ import com.nextlevel.subscription.domain.person.Name
 
 abstract class CreateAccount : UseCase<CreateAccount.Input, CreateAccount.Output>() {
 
-    data class Input(
-        val id: String,
-        val userId: String,
-        val firstname: String,
-        val lastname: String,
-        val documentNumber: String,
-        val documentType: String,
-        val email: String,
-    )
-
-    data class Output(
+    interface Input {
+        val userId: String
         val accountId: String
-    )
+        val firstname: String
+        val lastname: String
+        val documentNumber: String
+        val documentType: String
+        val email: String
+    }
+
+    interface Output {
+        val accountId: AccountId
+    }
 
     fun Input.toDomain(): Account = Account.newAccount(
-        id = AccountId(id),
+        id = AccountId(accountId),
         userId = UserId(userId),
         name = Name(firstname, lastname),
-        document = Document.create(documentNumber, documentType),
         email = Email(email),
+        document = Document.create(documentNumber, documentType),
     )
 }

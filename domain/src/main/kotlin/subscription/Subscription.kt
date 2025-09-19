@@ -8,6 +8,7 @@ import com.nextlevel.subscription.domain.account.AccountId
 
 class Subscription private constructor(
     id: SubscriptionId,
+    val version: Int,
     planId: PlanId,
     accountId: AccountId,
     dueDate: LocalDate,
@@ -51,6 +52,7 @@ class Subscription private constructor(
     val isIncomplete: Boolean = status === SubscriptionStatus.INCOMPLETE
 
     companion object {
+        const val INIT_VERSION = 0
         fun newSubscription(
             anId: SubscriptionId,
             aSelectPlan: PlanId,
@@ -59,6 +61,7 @@ class Subscription private constructor(
             val now = Instant.now()
             return Subscription(
                 anId,
+                INIT_VERSION,
                 aSelectPlan,
                 anAccountId,
                 LocalDate.now().plusMonths(1),
@@ -67,6 +70,32 @@ class Subscription private constructor(
                 null,
                 now,
                 now
+            )
+        }
+
+        fun with(
+            id: SubscriptionId,
+            version: Int,
+            planId: PlanId,
+            accountId: AccountId,
+            dueDate: LocalDate,
+            status: String,
+            lastRenewDate: Instant?,
+            lastTransactionId: String?,
+            createdAt: Instant,
+            updatedAt: Instant
+        ): Subscription {
+            return Subscription(
+                id,
+                version,
+                planId,
+                accountId,
+                dueDate,
+                SubscriptionStatus.valueOf(status),
+                lastRenewDate,
+                lastTransactionId,
+                createdAt,
+                updatedAt
             )
         }
     }
